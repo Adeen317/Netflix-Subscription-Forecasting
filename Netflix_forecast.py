@@ -79,3 +79,28 @@ p, d, q = 1, 1, 1
 model = ARIMA(time_series, order=(p, d, q))
 results = model.fit()
 print(results.summary())
+
+
+future_steps = 5
+predictions = results.predict(len(time_series), len(time_series) + future_steps - 1)
+predictions = predictions.astype(int)
+
+# Create a DataFrame with the original data and predictions
+forecast = pd.DataFrame({'Original': time_series, 'Predictions': predictions})
+
+# Plot the original data and predictions
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(x=forecast.index, y=forecast['Predictions'],
+                         mode='lines', name='Predictions'))
+
+fig.add_trace(go.Scatter(x=forecast.index, y=forecast['Original'],
+                         mode='lines', name='Original Data'))
+
+fig.update_layout(title='Netflix Quarterly Subscription Predictions',
+                  xaxis_title='Time Period',
+                  yaxis_title='Subscribers',
+                  legend=dict(x=0.1, y=0.9),
+                  showlegend=True)
+
+fig.show()
