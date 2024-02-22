@@ -64,3 +64,18 @@ fig.update_layout(title='Netflix Yearly Subscriber Growth Rate',
                   xaxis_title='Year',
                   yaxis_title='Yearly Growth Rate (%)')
 fig.show()
+
+time_series = data.set_index('Time Period')['Subscribers']
+
+differenced_series = time_series.diff().dropna()
+
+# Plot ACF and PACF of differenced time series
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+plot_acf(differenced_series, ax=axes[0])
+plot_pacf(differenced_series, ax=axes[1])
+plt.show()
+
+p, d, q = 1, 1, 1
+model = ARIMA(time_series, order=(p, d, q))
+results = model.fit()
+print(results.summary())
